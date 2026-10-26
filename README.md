@@ -1,104 +1,178 @@
-# Ahmed Huzaifa Malik · Portfolio
+# Bleach-Inspired Scroll Portfolio
 
-A scroll-driven, black-and-white portfolio inspired by the manga *Bleach*. Each section is a scene: rain falls over the landing panel, a figure drops into frame and lands, white shards tear away to reveal the About page, and experience rows ink in one at a time as you scroll.
+![HTML5](https://img.shields.io/badge/HTML5-000000?logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-000000?logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-000000?logo=javascript&logoColor=white)
+![GSAP](https://img.shields.io/badge/GSAP_3.15-000000?logo=greensock&logoColor=white)
+![Python](https://img.shields.io/badge/Python_tools-000000?logo=python&logoColor=white)
 
-I'm a Data Analyst and Data Scientist, a Data Science undergraduate at PAF-IAST, Pakistan. This site holds my internships, projects and contact details.
+A cinematic, scroll-driven portfolio website styled after the black-and-white ink of the manga *Bleach*. Every section is a pinned scene with its own animation timeline, so the page reads like turning manga pages: rain falls over the opening panel, a figure drops into frame and lands, paper shards tear away, and rows of work ink in as they reach the centre of the screen.
 
-![Landing page: rain over a manga panel](docs/preview.jpg)
+![Landing page: animated rain over a manga panel](docs/preview.jpg)
 
-**Live site:** _add your GitHub Pages link here after deploying (see [Deploy](#deploy))_
+**Live demo:** _add your GitHub Pages link here_
 
 ---
+
+## Project overview
+
+**Goal:** recreate the motion design of a reference "Bleach-inspired anime web design" video (pinned scenes, scrubbed timelines, colour-shift transitions, list rows that fill as they pass) and turn it into a working personal portfolio.
+
+**Constraints**
+
+- Strictly black and white. The reference used red and pink; every transition here is reworked in ink and paper.
+- No framework and no build step. One HTML file that deploys anywhere as static files.
+- Smooth on phones as well as desktops, and respectful of reduced-motion settings.
+
+**Outcome:** six animated sections, a canvas rain system tuned to the artwork, a small Python pipeline that prepares the manga panels, and nine original illustrations generated in code.
+
+## Features
+
+- **Pinned, scroll-scrubbed scenes** built on GSAP ScrollTrigger. Scrolling drives each timeline forwards and backwards.
+- **Canvas rain** in three depth layers that gets heavier as you scroll, angled to match the rain inked in the landing panel.
+- **Falling-figure sequence:** a white silhouette spins down and lands upright while the scene fades from ink to paper, then cross-fades into the inked version of the figure.
+- **Shard wipe:** paper polygons tear away to reveal the About section.
+- **Experience rows** that fill black as they cross the middle of the screen, each with an inverted ink illustration inside.
+- **Project cards** that wipe in from below, with parallax inside each card.
+- **Section rail and nav** that switch between light and dark text depending on the scene behind them.
+- **Film grain, floating dust and a custom cursor** for texture.
 
 ## Scenes
 
 ![Four scenes from the site](docs/scenes.jpg)
 
-| # | Section | What happens as you scroll |
-|---|---------|----------------------------|
-| 01 | **Landing** | A rain panel with an animated rain layer drawn on a canvas. The rain gets heavier, then the camera pushes into the figure's face, blurs and cuts to black. |
-| 02 | **Story** | Dust floats in the dark. A white flash, then a silhouette spins down and lands standing as the screen fades to a blank page under "Every datapoint lands somewhere." Panels slide in, speed lines sweep across and "Models that HIT." takes over. |
-| 03 | **About** | White shards tear away to reveal the About page, with the crowned skull figure fading in beside the summary, stack and certifications. |
-| 04 | **Experience** | Five internships. The row in the middle of the screen fills black with an ink illustration of that role's work. |
-| 05 | **Work** | Four project cards that wipe in from below, each with its own illustration. |
-| 06 | **Contact** | Email with a copy button, plus LinkedIn and GitHub. |
+| # | Scene | Scroll behaviour |
+|---|-------|------------------|
+| 01 | Landing | Rain thickens, the camera pushes into the figure's face, blurs and cuts to black |
+| 02 | Story | Dust, a white flash, the figure falls and lands, panels slide in, speed lines, "Models that HIT." |
+| 03 | About | Shards tear away, the crowned figure fades in beside the summary |
+| 04 | Experience | Five rows that ink in one at a time |
+| 05 | Work | Four project cards with original illustrations |
+| 06 | Contact | Email copy button, LinkedIn and GitHub |
 
 ![Project cards](docs/work.jpg)
 
-## Built with
+## How it works
 
-- **HTML, CSS and vanilla JavaScript.** One page, no framework, no build step.
-- **[GSAP 3.15](https://gsap.com/)** with **ScrollTrigger** for the pinned, scroll-scrubbed timelines.
-- **[Lenis 1.3](https://github.com/darkroomengineering/lenis)** for smooth scrolling.
-- **Canvas 2D** for the rain and the floating dust.
-- **Google Fonts:** Anton (display), Archivo (body), IBM Plex Mono (labels).
+### Scroll engine
+Lenis smooths the scroll, and its scroll events feed `ScrollTrigger.update` through GSAP's ticker, so pinned scenes and smooth scrolling never drift apart. Each scene is a `gsap.timeline` with `pin: true` and `scrub: 1`. The `end` value (for example `+=680%` for the story scene) sets how much scrolling the scene lasts.
+
+### Rain system
+Rain is drawn on a `<canvas>` in three layers (far, mid, near), each with its own speed, length, width and opacity. Every layer is stroked as a single path per frame to keep draw calls low. The scroll progress of the landing scene sets an intensity value that controls drop count, speed and slant. The slant came from the artwork itself: a structure-tensor estimate over the open sky in the panel gave a lean of roughly 7° down and to the left.
+
+### Ink-on-paper compositing
+- Panels on paper use `mix-blend-mode: multiply`, so the white of the scan disappears and only the ink stays.
+- Panels on black use `filter: invert(1)` with `mix-blend-mode: screen`, so the ink turns into white linework on black.
+- Reveals use animated `clip-path: inset()` instead of opacity, so every edge stays hard like a cut panel.
+
+### Asset pipeline (`tools/`)
+- `prepare_panels.py gray` converts panels to grayscale, auto-levels them and compresses them to WebP.
+- `prepare_panels.py cutout` removes the white background around a figure by flood-filling from the image edges. Enclosed whites such as a face or a skull are kept, and the figure is tinted ink-to-bone.
+- `prepare_panels.py silhouette` produces the solid white silhouette (holes filled with SciPy morphology) and the transparent ink layer used in the falling-figure cross-fade.
+- `draw_illustrations.py` draws the nine experience and project illustrations from scratch: manga focus lines, halftone dot screens, speed lines and hatching, plus a motif for each entry (ranking bars, boosted trees, a churn crowd, A/B curves, a data pipeline, a gamepad over review scores, a fraud outlier cloud, a risk gauge, a cart with a chi-square tail).
+
+## Challenges and fixes
+
+| Problem | Fix |
+|---|---|
+| Images inside the experience rows never loaded | Lazy loading skips images inside an element clipped to zero height, so those images load eagerly |
+| The multiply blend had no effect on the contact art | A positioned element with `z-index` forms its own stacking context, so the blend mode moved from the image to that layer |
+| Pinned scenes drifting against smooth scrolling | Lenis drives `ScrollTrigger.update` from GSAP's ticker, with lag smoothing off |
+| Generated rain looked pasted on top of the art | Measured the streak angle in the panel and matched the canvas rain to it |
+| Canvases costing CPU while off screen | Rain and dust only animate while their section is in view |
+| White figure art leaving hard rectangle edges | Radial and linear CSS masks feather each panel into the background |
+
+## Tech stack
+
+| Area | Tools |
+|---|---|
+| Markup and styling | HTML5, CSS custom properties, CSS masks, blend modes and clip-path |
+| Animation | GSAP 3.15, ScrollTrigger, Lenis 1.3, Canvas 2D |
+| Type | Anton, Archivo, IBM Plex Mono (Google Fonts) |
+| Asset tooling | Python, Pillow, NumPy, SciPy |
+| Testing | Playwright screenshots across the scroll timeline at desktop and phone widths |
 
 ## Project structure
 
 ```
 .
-├── index.html          # markup, styles and all animation code
+├── index.html                 # markup, styles and all animation code
 ├── assets/
-│   ├── hero-rain.webp      # landing panel
-│   ├── fall-white.webp     # falling figure, silhouette
-│   ├── fall-ink.webp       # falling figure, ink version
-│   ├── bankai.webp         # story panels
+│   ├── hero-rain.webp         # landing panel
+│   ├── fall-white.webp        # falling figure, silhouette
+│   ├── fall-ink.webp          # falling figure, ink layer
+│   ├── bankai.webp            # story panels
 │   ├── profile.webp
 │   ├── clash.webp
-│   ├── crown-cut.webp      # About figure
-│   ├── table.webp          # contact panel
-│   └── art-*.webp          # experience and project illustrations
-└── docs/                # README screenshots
+│   ├── crown-cut.webp         # About figure (cut out)
+│   ├── table.webp             # contact panel
+│   └── art-*.webp             # generated experience and project illustrations
+├── tools/
+│   ├── prepare_panels.py      # grayscale, cutout and silhouette processing
+│   ├── draw_illustrations.py  # procedural ink illustrations
+│   └── requirements.txt
+└── docs/                      # README screenshots
 ```
 
-## Run locally
+## Getting started
 
-Serve the folder from a local server so the images and scripts load the same way they will online:
+Run the site locally:
 
 ```bash
-# Python
 python -m http.server 8000
-
-# or Node
+# or
 npx serve .
 ```
 
 Then open http://localhost:8000.
 
-## Deploy
+Regenerate assets (optional):
 
-**GitHub Pages**
+```bash
+pip install -r tools/requirements.txt
 
-1. Push this folder to a repository, with `index.html` at the root.
-2. Go to **Settings → Pages**.
-3. Under **Build and deployment**, choose **Deploy from a branch**, pick `main` and `/ (root)`, then save.
-4. After a minute the site is live at `https://<your-username>.github.io/<repo-name>/`.
+python tools/prepare_panels.py gray       panel.jpg assets/panel.webp
+python tools/prepare_panels.py cutout     figure.jpg assets/figure-cut.webp --crop 700,90,1759,1300
+python tools/prepare_panels.py silhouette standing.jpg assets/fall-white.webp assets/fall-ink.webp
 
-**Netlify or Vercel:** drag the folder onto the dashboard, or import the repository. No build command is needed.
+# needs Anton-Regular.ttf and IBMPlexMono-SemiBold.ttf from Google Fonts in tools/fonts/
+python tools/draw_illustrations.py assets
+```
 
-## Customising
+## Deployment
 
-All edits happen in `index.html`.
+**GitHub Pages:** push the repository with `index.html` at the root, then go to **Settings → Pages → Deploy from a branch → `main` / root**. The site goes live at `https://<username>.github.io/<repo>/`.
 
-- **Content:** each section is a labelled `<section>` (`#intro`, `#story`, `#about`, `#experience`, `#work`, `#contact`). Change the text in place.
-- **Art:** replace a file in `assets/` with one of the same name, or change the `src`. Panels on light backgrounds use `mix-blend-mode: multiply`, so black ink on a white background works best.
-- **Colours:** the palette is defined once as CSS variables in `:root` (`--ink`, `--paper`, `--bone` and so on).
-- **Animation:** the script is split into commented blocks (`rain`, `hero`, `story`, `about`, `experience rows`, `work + contact`). Each pinned scene has its own timeline, and the `end: '+=230%'` values set how much scrolling each one takes.
+**Netlify or Vercel:** import the repository or drag the folder in. There's no build command.
 
-## Accessibility and performance
+## Customisation
 
-- Honours `prefers-reduced-motion`: smooth scrolling, film grain and the looping animations switch off, and the rain is drawn as a still frame.
-- The rain and dust canvases only animate while their section is on screen.
-- All images are compressed WebP, and the experience and project art is lightweight line work.
-- Text stays readable without JavaScript, and everything uses real links and buttons with visible focus states.
+- **Content:** each scene is a `<section>` with an id (`#intro`, `#story`, `#about`, `#experience`, `#work`, `#contact`).
+- **Colours:** one set of CSS variables in `:root` (`--ink`, `--paper`, `--bone` and others).
+- **Timing:** each scene's timeline sits in its own commented block in the script. Change the `end` value to lengthen or shorten a scene.
+- **Art:** drop a new file into `assets/` under the same name, or run it through `tools/prepare_panels.py` first.
+
+## Accessibility
+
+- `prefers-reduced-motion` turns off smooth scrolling, grain and looping animation, and the rain is drawn as a still frame.
+- All content is readable without JavaScript. Hidden starting states are only applied once the script has loaded.
+- Real `<a>` and `<button>` elements with visible focus outlines. Decorative images are hidden from screen readers.
+
+## Future improvements
+
+- Drive the falling figure from a rendered image sequence for true 3D rotation.
+- Add a case-study page for each project.
+- Add a preloader that waits for the panels before the opening animation runs.
 
 ## Credits
 
-- The *Bleach* manga panels used in the landing, story, About and contact sections are © Tite Kubo / Shueisha. They're used here as fan art in a personal, non-commercial portfolio. This project has no affiliation with the creators or publishers.
-- The experience and project illustrations are original.
-- GSAP is free under the [GSAP Standard License](https://gsap.com/standard-license/). Lenis is MIT-licensed.
+- *Bleach* manga panels © Tite Kubo / Shueisha, used as fan art in a personal, non-commercial project. Not affiliated with the creators or publishers.
+- Experience and project illustrations are original, generated by `tools/draw_illustrations.py`.
+- [GSAP](https://gsap.com/) (GSAP Standard License) and [Lenis](https://github.com/darkroomengineering/lenis) (MIT).
 
-## Contact
+## Author
+
+**Ahmed Huzaifa Malik**, Data Analyst and Data Scientist
 
 - Email: ahmedhuzaifamalik@gmail.com
 - LinkedIn: [ahmed-huzaifa-malik](https://www.linkedin.com/in/ahmed-huzaifa-malik/)
