@@ -67,7 +67,7 @@ a{color:inherit}
 /* ---------- 01 hero (ink) ---------- */
 .hero{position:relative;height:100vh;height:100svh;min-height:560px;overflow:hidden;background:var(--ink)}
 .stage{position:absolute;inset:0;isolation:isolate;will-change:transform}
-.hero-art{position:absolute;left:50%;top:-4%;height:108%;aspect-ratio:736/1105;transform:translateX(-50%)}
+.hero-art{position:absolute;left:50%;top:-4%;height:108%;aspect-ratio:676/1200;transform:translateX(-50%)}
 .hero-art img{display:block;width:100%;height:100%;max-width:none;
   -webkit-mask-image:linear-gradient(to right,transparent,#000 24%,#000 76%,transparent);mask-image:linear-gradient(to right,transparent,#000 24%,#000 76%,transparent)}
 .hero-scrim{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,.6),rgba(0,0,0,0) 42%)}
@@ -254,7 +254,7 @@ a{color:inherit}
   <!-- 01 HERO -->
   <section class="hero" id="intro" data-nav="dark">
     <div class="stage">
-      <div class="hero-art"><img src="assets/hero-rain.webp" alt="" width="736" height="1105" decoding="async" fetchpriority="high"></div>
+      <div class="hero-art"><img src="assets/hero-rain.webp" alt="" width="676" height="1200" decoding="async" fetchpriority="high"></div>
     </div>
     <div class="hero-scrim" aria-hidden="true"></div>
     <canvas id="rain" aria-hidden="true"></canvas>
@@ -530,8 +530,8 @@ a{color:inherit}
   const stage = document.querySelector('.stage');
   const art = document.querySelector('.hero-art');
   const setOrigin = () => {
-    const x = (stage.offsetWidth / 2 + (.43 - .5) * art.offsetWidth) / stage.offsetWidth * 100;
-    const y = (art.offsetTop + .19 * art.offsetHeight) / stage.offsetHeight * 100;
+    const x = (stage.offsetWidth / 2 + (.45 - .5) * art.offsetWidth) / stage.offsetWidth * 100;
+    const y = (art.offsetTop + .34 * art.offsetHeight) / stage.offsetHeight * 100;
     gsap.set(stage, { transformOrigin: x.toFixed(2) + '% ' + y.toFixed(2) + '%' }); // push into his face
   };
   setOrigin();
