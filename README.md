@@ -8,9 +8,7 @@
 
 A cinematic, scroll-driven portfolio website styled after the black-and-white ink of the manga *Bleach*. Every section is a pinned scene with its own animation timeline, so the page reads like turning manga pages: rain falls over the opening panel, a figure drops into frame and lands, paper shards tear away, and rows of work ink in as they reach the centre of the screen.
 
-![Landing page: animated rain over a manga panel](docs/preview.jpg)
-
-**Live demo:** _add your GitHub Pages link here_
+**Live demo:** https://ahmed-huzaifa-malik-bleach-portfolio.vercel.app/
 
 ---
 
@@ -39,8 +37,6 @@ A cinematic, scroll-driven portfolio website styled after the black-and-white in
 
 ## Scenes
 
-![Four scenes from the site](docs/scenes.jpg)
-
 | # | Scene | Scroll behaviour |
 |---|-------|------------------|
 | 01 | Landing | Rain thickens, the camera pushes into the figure's face, blurs and cuts to black |
@@ -49,8 +45,6 @@ A cinematic, scroll-driven portfolio website styled after the black-and-white in
 | 04 | Experience | Five rows that ink in one at a time |
 | 05 | Work | Four project cards with original illustrations |
 | 06 | Contact | Email copy button, LinkedIn and GitHub |
-
-![Project cards](docs/work.jpg)
 
 ## How it works
 
@@ -113,37 +107,6 @@ Rain is drawn on a `<canvas>` in three layers (far, mid, near), each with its ow
 │   └── requirements.txt
 └── docs/                      # README screenshots
 ```
-
-## Getting started
-
-Run the site locally:
-
-```bash
-python -m http.server 8000
-# or
-npx serve .
-```
-
-Then open http://localhost:8000.
-
-Regenerate assets (optional):
-
-```bash
-pip install -r tools/requirements.txt
-
-python tools/prepare_panels.py gray       panel.jpg assets/panel.webp
-python tools/prepare_panels.py cutout     figure.jpg assets/figure-cut.webp --crop 700,90,1759,1300
-python tools/prepare_panels.py silhouette standing.jpg assets/fall-white.webp assets/fall-ink.webp
-
-# needs Anton-Regular.ttf and IBMPlexMono-SemiBold.ttf from Google Fonts in tools/fonts/
-python tools/draw_illustrations.py assets
-```
-
-## Deployment
-
-**GitHub Pages:** push the repository with `index.html` at the root, then go to **Settings → Pages → Deploy from a branch → `main` / root**. The site goes live at `https://<username>.github.io/<repo>/`.
-
-**Netlify or Vercel:** import the repository or drag the folder in. There's no build command.
 
 ## Customisation
 
