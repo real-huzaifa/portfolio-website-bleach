@@ -105,7 +105,6 @@ Rain is drawn on a `<canvas>` in three layers (far, mid, near), each with its ow
 │   ├── prepare_panels.py      # grayscale, cutout and silhouette processing
 │   ├── draw_illustrations.py  # procedural ink illustrations
 │   └── requirements.txt
-└── docs/                      # README screenshots
 ```
 
 ## Customisation
