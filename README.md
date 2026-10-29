@@ -1,4 +1,4 @@
-# Bleach-Inspired Scroll Portfolio
+# Bleach-Inspired Personal Portfolio
 
 ![HTML5](https://img.shields.io/badge/HTML5-000000?logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-000000?logo=css3&logoColor=white)
