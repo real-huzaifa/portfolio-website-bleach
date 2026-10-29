@@ -67,7 +67,7 @@ a{color:inherit}
 /* ---------- 01 hero (ink) ---------- */
 .hero{position:relative;height:100vh;height:100svh;min-height:560px;overflow:hidden;background:var(--ink)}
 .stage{position:absolute;inset:0;isolation:isolate;will-change:transform}
-.hero-art{position:absolute;left:50%;top:-4%;height:108%;aspect-ratio:676/1200;transform:translateX(-50%)}
+.hero-art{--art-shift:.5;position:absolute;left:50%;top:-4%;height:108%;aspect-ratio:676/1200;transform:translateX(calc(var(--art-shift) * -100%))}
 .hero-art img{display:block;width:100%;height:100%;max-width:none;
   -webkit-mask-image:linear-gradient(to right,transparent,#000 24%,#000 76%,transparent);mask-image:linear-gradient(to right,transparent,#000 24%,#000 76%,transparent)}
 .hero-scrim{position:absolute;inset:0;z-index:2;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,.6),rgba(0,0,0,0) 42%)}
@@ -195,13 +195,18 @@ a{color:inherit}
   .nav{gap:10px}
   .nav-links a{font-size:9.5px;letter-spacing:.1em}
   .brand{font-size:12px}
-  .hero-art{top:0;height:100%}
-  .hero-scrim{background:linear-gradient(to top,rgba(0,0,0,.88),rgba(0,0,0,0) 58%)}
+  .hero-art{--art-shift:.68;top:7%;height:96%}
+  .hero-scrim{background:linear-gradient(to bottom,rgba(0,0,0,.72),rgba(0,0,0,0) 30%),linear-gradient(to top,rgba(0,0,0,.86),rgba(0,0,0,0) 36%)}
+  .hero-eyebrow{display:none}
   .about .eyebrow,.about-title,.about-body{max-width:none}
-  .about-fig{height:52%;right:-34vw;opacity:.32}
+  .about-fig{position:relative;right:auto;bottom:auto;height:auto;width:min(88vw,440px);align-self:center;margin-bottom:-10vh}
+  .contact-art{position:relative;order:1;left:auto;right:auto;bottom:auto;height:auto;margin-top:clamp(28px,6vh,56px);margin-left:calc(var(--pad-l) * -1);margin-right:calc(var(--pad-r) * -1)}
+  .contact-art img{height:auto;-webkit-mask-image:linear-gradient(to bottom,transparent,#000 22%);mask-image:linear-gradient(to bottom,transparent,#000 22%)}
+  .contact-row{margin-bottom:0}
+  .footer{order:2;margin-top:0}
   .ht{top:auto}
-  .ht-left{bottom:25%}
-  .ht-right{right:var(--pad-r);bottom:9%}
+  .ht-left{top:calc(env(safe-area-inset-top,0px) + 100px)}
+  .ht-right{right:var(--pad-r);bottom:calc(env(safe-area-inset-bottom,0px) + 44px)}
   .hero-hint{display:none}
   .fall{width:84vw;margin-left:-42vw;margin-top:-41.4vw}
   .story-line{bottom:12vh}
@@ -305,7 +310,7 @@ a{color:inherit}
     <h2 class="about-title">
       <span class="ln"><span class="ln-in">Analyst</span></span>
       <span class="ln"><span class="ln-in">instinct.</span></span>
-      <span class="ln"><span class="ln-in"><span class="inv">Aspiring</span> skills.</span></span>
+      <span class="ln"><span class="ln-in"><span class="inv">Proven</span> skills.</span></span>
     </h2>
     <div class="about-body">
       <p>I'm a Data Science undergraduate at PAF-IAST. I work in Python and SQL from raw data to a deployed result: cleaning and exploring it, testing hypotheses, training models, then shipping them as APIs and dashboards. Across five internships I've built ranking, fraud and churn models, and I check each one for leakage before I trust its score.</p>
@@ -530,7 +535,8 @@ a{color:inherit}
   const stage = document.querySelector('.stage');
   const art = document.querySelector('.hero-art');
   const setOrigin = () => {
-    const x = (stage.offsetWidth / 2 + (.45 - .5) * art.offsetWidth) / stage.offsetWidth * 100;
+    const shift = parseFloat(getComputedStyle(art).getPropertyValue('--art-shift')) || .5;
+    const x = (stage.offsetWidth / 2 + (.45 - shift) * art.offsetWidth) / stage.offsetWidth * 100;
     const y = (art.offsetTop + .34 * art.offsetHeight) / stage.offsetHeight * 100;
     gsap.set(stage, { transformOrigin: x.toFixed(2) + '% ' + y.toFixed(2) + '%' }); // push into his face
   };
@@ -646,7 +652,7 @@ a{color:inherit}
     .to('.fall-white', { opacity: 0, duration: .8 }, 3.9)
     .to('.fall-ink', { opacity: 1, duration: .8 }, 3.9)
     .to('.story-label', { autoAlpha: 0, duration: .4 }, 3.7)
-    .to('.fall', { x: '78vw', rotation: 360, scale: 1.12, duration: 1.3, ease: 'power2.in' }, 4.9)
+    .to('.fall', { x: phone ? '115vw' : '78vw', autoAlpha: 0, rotation: 360, scale: 1.12, duration: 1.3, ease: 'power2.in' }, 4.9)
     .to('.story-line .ln-in', { yPercent: -115, stagger: .08, duration: .7, ease: 'power2.in' }, 5)
     .to('.panel-bankai', { xPercent: 0, autoAlpha: 1, duration: 1.3, ease: 'power3.out' }, 5.2)
     .to('.panel-bankai', { yPercent: -45, autoAlpha: 0, duration: 1.1, ease: 'power2.in' }, 6.6)
@@ -691,7 +697,7 @@ a{color:inherit}
     gsap.from(card, { clipPath: 'inset(100% 0% 0% 0%)', duration: 1.2, ease: 'power4.out', scrollTrigger: { trigger: card, start: 'top 90%', once: true } });
     gsap.fromTo(card.querySelector('img'), { yPercent: -6 }, { yPercent: 6, ease: 'none', scrollTrigger: { trigger: card, start: 'top bottom', end: 'bottom top', scrub: true } });
   });
-  gsap.fromTo('.contact-art img', { yPercent: 8 }, { yPercent: -4, ease: 'none', scrollTrigger: { trigger: '.contact', start: 'top bottom', end: 'bottom bottom', scrub: true } });
+  if (!phone) gsap.fromTo('.contact-art img', { yPercent: 8 }, { yPercent: -4, ease: 'none', scrollTrigger: { trigger: '.contact', start: 'top bottom', end: 'bottom bottom', scrub: true } });
 
   /* ---------- nav theme + section rail ---------- */
   const railLinks = [...document.querySelectorAll('.rail a')];
